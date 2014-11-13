@@ -16,7 +16,20 @@ var ctor = module.exports = function (opts, cb) {
   less(path.resolve(process.cwd(), opts.entry), {preprocess: preprocess}, function (err, output) {
     if (err) return process.nextTick(function () { cb(err) })
 
-    process.nextTick(function() { cb(null, output.toCSS(opts)) })
+    process.nextTick(function() {
+      var css, err
+      try {
+        css = output.toCSS(opts)
+      } catch(e) {
+        err = e
+      }
+
+      if (err) {
+        return cb(err)
+      }
+
+      cb(null, css)
+    })
   })
 }
 
